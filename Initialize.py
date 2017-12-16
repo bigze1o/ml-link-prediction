@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 def DataShape(Data):
     #ListData contain SRT to TGT : Yes or No link
@@ -43,5 +44,28 @@ def CommanNeighbor(Matrix_Link):
                     cn += 1
             Matrix_Link[(i-1) * MaxNode + j - 1][2] = cn
             Matrix_Link[(j-1) * MaxNode + i - 1][2] = cn        
+    return Matrix_Link
+
+def Jaccard(Matrix_Link):
+    MaxNode = 330
+    for i in range(1, MaxNode + 1):
+        for j in range(1, MaxNode + 1):
+            if i == j:
+                continue
+            cn = 0
+            jc = 0
+            row_src_start = (i - 1) * MaxNode
+            row_tgt_start = (j - 1) * MaxNode
+            for k in range(1, MaxNode + 1):
+                if Matrix_Link[row_src_start + k - 1][3] == 1 and Matrix_Link[row_tgt_start + k - 1][3] == 1:
+                    cn += 1    
+                if Matrix_Link[row_src_start + k - 1][3] == 1 or Matrix_Link[row_tgt_start + k - 1][3] == 1:
+                    jc += 1
+            if jc == 0:
+                jc = 0.0
+            else:
+                jc = cn * 1.0 / jc
+            Matrix_Link[(i-1) * MaxNode + j - 1][2] = jc
+            Matrix_Link[(j-1) * MaxNode + i - 1][2] = jc 
     return Matrix_Link
 
