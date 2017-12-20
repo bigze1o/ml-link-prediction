@@ -23,7 +23,7 @@ def getMatrixFull(matrixAdj):
 
 def getMatrixHalf(matrixAdj):
     maxNode = len(matrixAdj)
-    matrixScore = np.empty((0))
+    matrixScore = []
     for i in range(maxNode):
         for j in range(i + 1, maxNode):
             aaScore = 0.0
@@ -33,7 +33,8 @@ def getMatrixHalf(matrixAdj):
                     if log(res) != 0.0:
                         aaScore += 1.0/log(res)
                 tag_class = matrixAdj[i, j]
-
+            matrixScore.append([aaScore, tag_class])
+    return np.array(matrixScore)
 
 
             
