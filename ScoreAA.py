@@ -1,6 +1,7 @@
 import numpy as np
 from math import log
 
+
 def getMatrixFull(matrixAdj):
     maxNode = len(matrixAdj)
     matrixScore = np.zeros((maxNode * maxNode, 2))

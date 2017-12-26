@@ -1,18 +1,21 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'untitled.ui'
-#
-# Created by: PyQt5 UI code generator 5.9.2
-#
-# WARNING! All changes made in this file will be lost!
-
 from PyQt5 import QtCore, QtGui, QtWidgets
+import PreProcess
+import AdjacencyMatrix
+import ScoreAA
+import MachineLearning
+import numpy as np
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import classification_report
+from sklearn.svm import SVC
+from sklearn import svm
 
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.setEnabled(True)
-        Form.resize(755, 628)
+        Form.resize(741, 628)
         font = QtGui.QFont()
         font.setFamily("Batang")
         font.setBold(False)
@@ -41,7 +44,7 @@ class Ui_Form(object):
 "")
         self.label.setObjectName("label")
         self.tabWidget = QtWidgets.QTabWidget(Form)
-        self.tabWidget.setGeometry(QtCore.QRect(50, 110, 651, 431))
+        self.tabWidget.setGeometry(QtCore.QRect(50, 110, 651, 451))
         self.tabWidget.setStyleSheet("QTabWidget::pane {\n"
 "    background: white;\n"
 "border-style: outset;\n"
@@ -156,7 +159,7 @@ class Ui_Form(object):
 "}")
         self.label_6.setObjectName("label_6")
         self.label_4 = QtWidgets.QLabel(self.tab_4)
-        self.label_4.setGeometry(QtCore.QRect(30, 200, 91, 21))
+        self.label_4.setGeometry(QtCore.QRect(30, 180, 91, 21))
         font = QtGui.QFont()
         font.setPointSize(14)
         font.setBold(False)
@@ -170,7 +173,7 @@ class Ui_Form(object):
 "")
         self.label_4.setObjectName("label_4")
         self.comboBox = QtWidgets.QComboBox(self.tab_4)
-        self.comboBox.setGeometry(QtCore.QRect(30, 240, 221, 31))
+        self.comboBox.setGeometry(QtCore.QRect(30, 210, 221, 31))
         self.comboBox.setStyleSheet("QComboBox\n"
 "{\n"
 "    selection-background-color: #03a9f4;\n"
@@ -221,7 +224,7 @@ class Ui_Form(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.pushButton = QtWidgets.QPushButton(self.tab_4)
-        self.pushButton.setGeometry(QtCore.QRect(50, 320, 186, 41))
+        self.pushButton.setGeometry(QtCore.QRect(50, 280, 186, 41))
         self.pushButton.setStyleSheet("QPushButton {\n"
 "    background-color: #03a9f4;\n"
 "    border-style: outset;\n"
@@ -395,6 +398,10 @@ class Ui_Form(object):
         self.label_37.setWordWrap(True)
         self.label_37.setTextInteractionFlags(QtCore.Qt.LinksAccessibleByMouse)
         self.label_37.setObjectName("label_37")
+        self.progressBar_1 = QtWidgets.QProgressBar(self.tab_4)
+        self.progressBar_1.setGeometry(QtCore.QRect(30, 350, 221, 23))
+        self.progressBar_1.setProperty("value", 24)
+        self.progressBar_1.setObjectName("progressBar_1")
         self.graphicsView_4.raise_()
         self.line_2.raise_()
         self.label_6.raise_()
@@ -411,6 +418,7 @@ class Ui_Form(object):
         self.label_35.raise_()
         self.label_36.raise_()
         self.label_37.raise_()
+        self.progressBar_1.raise_()
         self.tabWidget.addTab(self.tab_4, "")
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
@@ -449,7 +457,7 @@ class Ui_Form(object):
 "}")
         self.radioButton_2.setObjectName("radioButton_2")
         self.graphicsView_11 = QtWidgets.QGraphicsView(self.tab)
-        self.graphicsView_11.setGeometry(QtCore.QRect(10, 40, 621, 351))
+        self.graphicsView_11.setGeometry(QtCore.QRect(10, 40, 621, 361))
         self.graphicsView_11.setStyleSheet("#graphicsView_11{\n"
 "    border: 2px solid red;\n"
 "    border-color: #eceff1;\n"
@@ -473,7 +481,7 @@ class Ui_Form(object):
 "}")
         self.radioButton_4.setObjectName("radioButton_4")
         self.pushButton_3 = QtWidgets.QPushButton(self.tab)
-        self.pushButton_3.setGeometry(QtCore.QRect(220, 310, 186, 41))
+        self.pushButton_3.setGeometry(QtCore.QRect(220, 300, 186, 41))
         self.pushButton_3.setStyleSheet("QPushButton {\n"
 "    background-color: #03a9f4;\n"
 "    border-style: outset;\n"
@@ -556,6 +564,10 @@ class Ui_Form(object):
 "")
         self.label_65.setWordWrap(True)
         self.label_65.setObjectName("label_65")
+        self.progressBar_2 = QtWidgets.QProgressBar(self.tab)
+        self.progressBar_2.setGeometry(QtCore.QRect(50, 360, 541, 23))
+        self.progressBar_2.setProperty("value", 24)
+        self.progressBar_2.setObjectName("progressBar_2")
         self.graphicsView_11.raise_()
         self.line_3.raise_()
         self.label_38.raise_()
@@ -568,6 +580,7 @@ class Ui_Form(object):
         self.label_40.raise_()
         self.label_41.raise_()
         self.label_65.raise_()
+        self.progressBar_2.raise_()
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
@@ -671,6 +684,10 @@ class Ui_Form(object):
 "    \n"
 "}")
         self.checkBox_7.setObjectName("checkBox_7")
+        self.progressBar_3 = QtWidgets.QProgressBar(self.tab_2)
+        self.progressBar_3.setGeometry(QtCore.QRect(80, 370, 511, 23))
+        self.progressBar_3.setProperty("value", 24)
+        self.progressBar_3.setObjectName("progressBar_3")
         self.tabWidget.addTab(self.tab_2, "")
         self.tab_3 = QtWidgets.QWidget()
         self.tab_3.setObjectName("tab_3")
@@ -729,11 +746,11 @@ class Ui_Form(object):
 "    \n"
 "}")
         self.radioButton_9.setObjectName("radioButton_9")
-        self.progressBar = QtWidgets.QProgressBar(self.tab_3)
-        self.progressBar.setGeometry(QtCore.QRect(30, 200, 581, 23))
-        self.progressBar.setProperty("value", 24)
-        self.progressBar.setObjectName("progressBar")
-        self.plainTextEdit = QtWidgets.QPlainTextEdit(self.tab_3)
+        self.progressBar_4 = QtWidgets.QProgressBar(self.tab_3)
+        self.progressBar_4.setGeometry(QtCore.QRect(30, 200, 581, 23))
+        self.progressBar_4.setProperty("value", 24)
+        self.progressBar_4.setObjectName("progressBar_4")
+        self.plainTextEdit = QtWidgets.QTextEdit(self.tab_3)
         self.plainTextEdit.setGeometry(QtCore.QRect(30, 270, 581, 111))
         self.plainTextEdit.setStyleSheet("#plainTextEdit{\n"
 "    border: 2px solid red;\n"
@@ -775,7 +792,7 @@ class Ui_Form(object):
         self.label_67.raise_()
         self.pushButton_7.raise_()
         self.radioButton_9.raise_()
-        self.progressBar.raise_()
+        self.progressBar_4.raise_()
         self.plainTextEdit.raise_()
         self.label_68.raise_()
         self.radioButton_10.raise_()
@@ -953,8 +970,77 @@ class Ui_Form(object):
 
         self.retranslateUi(Form)
         self.tabWidget.setCurrentIndex(0)
+        #Add
+        
+        self.status_tab1 = False
+        self.status_tab2 = False
+        self.status_tab3 = False
+        self.status_tab4 = False
+        self.Path_File = None
+        self.Matrix_Adjacency = []
+        self.Feature_Vector = []
+        self.pushButton.clicked.connect(self.tab1_Save)
+        self.pushButton_3.clicked.connect(self.tab2_Save)
+        self.pushButton_6.clicked.connect(self.tab3_Save)
+        self.pushButton_7.clicked.connect(self.tab4_Save)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
+    #Add
+    def tab1_Save(self):
+        value_comboBox = self.comboBox.currentIndex()
+        if value_comboBox == 0:
+             self.progressBar_1.setValue(0)
+             self.status_tab1 = False
+             self.Path_File = None
+        else:
+             self.progressBar_1.setValue(100)
+             self.status_tab1 = True
+             text = str(self.comboBox.currentText())
+             self.Path_File = 'Dataset/' + text + '.csv'
+
+    def tab2_Save(self):
+        if not self.radioButton.isChecked() and not self.radioButton_2.isChecked():
+           return None
+        Data = PreProcess.ReadDataNoWeight(self.Path_File)
+        if self.radioButton.isChecked():
+           self.Matrix_Adjacency = AdjacencyMatrix.Matrix_Link(Data)
+        if self.radioButton_2.isChecked():
+           self.Matrix_Adjacency = AdjacencyMatrix.Matrix_Link_Undirect(Data) 
+        self.progressBar_2.setValue(100)       
+
+    def tab3_Save(self):
+        if self.checkBox_3.isChecked():
+           self.Feature_Vector = ScoreAA.getMatrixHalf(self.Matrix_Adjacency)
+        self.progressBar_3.setValue(100)
+
+    def tab4_Save(self):
+        if self.radioButton_10.isChecked():
+           X_train, X_test, y_train, y_test = train_test_split(self.Feature_Vector[:,:-1].reshape(-1,1), self.Feature_Vector[:,-1], test_size=0.2, random_state=0)
+        tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4],'C': [1]}]
+
+        #scores = ['precision', 'recall']
+        scores = ['precision']
+        for score in scores:
+                clf = GridSearchCV(SVC(), tuned_parameters, cv=5, scoring='%s_macro' % score)
+                clf.fit(X_train, y_train)
+                print("Best parameters:")
+                print()
+                print(clf.best_params_)
+                print()
+                print("Grid scores:")
+                print()
+                means = clf.cv_results_['mean_test_score']
+                stds = clf.cv_results_['std_test_score']
+                for mean, std, params in zip(means, stds, clf.cv_results_['params']):
+                        print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
+                        print()
+                print("Detailed classification report:")
+                y_true, y_pred = y_test, clf.predict(X_test)
+                report = str(classification_report(y_true, y_pred))
+                self.plainTextEdit.setText(report)
+                print()
+           
+                
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         self.label.setText(_translate("Form", "Link Prediction in Social Network"))
@@ -1014,7 +1100,11 @@ class Ui_Form(object):
         self.label_14.setText(_translate("Form", "15520996"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _translate("Form", "INFORMATION"))
         self.label_3.setText(_translate("Form", "A new approach with Machine Learning"))
-
+        #Add
+        self.progressBar_1.reset()
+        self.progressBar_4.reset()
+        self.progressBar_2.reset()
+        self.progressBar_3.reset()
 
 if __name__ == "__main__":
     import sys

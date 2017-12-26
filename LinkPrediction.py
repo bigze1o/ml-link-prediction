@@ -14,7 +14,7 @@ from sklearn.metrics import classification_report
 from sklearn.svm import SVC
 from sklearn import svm
 
-PathFile = u'Data.csv'
+PathFile = u'Dataset/USAir.csv'
 Data_No_Weight = PreProcess.ReadDataNoWeight(PathFile)
 Data_Adjacency = AdjacencyMatrix.Matrix_Link_Undirect(Data_No_Weight)
 #AAScore = ScoreCN.getMatrix(Data_Adjacency)
@@ -28,7 +28,7 @@ Data_Adjacency = AdjacencyMatrix.Matrix_Link_Undirect(Data_No_Weight)
 AAScore = ScoreAA.getMatrixHalf(Data_Adjacency)
 #AAScore = np.unique(AAScore,axis =0)
 #print(AAScore[332:345, :])
-test, prediction = MachineLearning.Train_Test_Split(AAScore)
+#test, prediction = MachineLearning.Train_Test_Split(AAScore)
 # print(len(AAScore))
 #print(AUC.getPrecision(test, prediction))
 
