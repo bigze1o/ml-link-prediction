@@ -2,6 +2,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import PreProcess
 import AdjacencyMatrix
 import ScoreAA
+import ScoreCN
+import ScoreJC
+import ScorePA
 import MachineLearning
 import numpy as np
 from sklearn import datasets
@@ -1006,16 +1009,23 @@ class Ui_Form(object):
            self.Matrix_Adjacency = AdjacencyMatrix.Matrix_Link(Data)
         if self.radioButton_2.isChecked():
            self.Matrix_Adjacency = AdjacencyMatrix.Matrix_Link_Undirect(Data) 
-        self.progressBar_2.setValue(100)       
+        self.progressBar_2.setValue(100)
+        print(self.Matrix_Adjacency, len(self.Matrix_Adjacency))       
 
     def tab3_Save(self):
+        if self.checkBox.isChecked():
+           self.Feature_Vector = ScoreCN.getMatrixHalf(self.Matrix_Adjacency)
+        if self.checkBox_2.isChecked():
+           self.Feature_Vector = ScoreJC.getMatrixHalf(self.Matrix_Adjacency)
         if self.checkBox_3.isChecked():
            self.Feature_Vector = ScoreAA.getMatrixHalf(self.Matrix_Adjacency)
+        if self.checkBox_4.isChecked():
+           self.Feature_Vector = ScorePA.getMatrixHalf(self.Matrix_Adjacency)
         self.progressBar_3.setValue(100)
 
     def tab4_Save(self):
         if self.radioButton_10.isChecked():
-           X_train, X_test, y_train, y_test = train_test_split(self.Feature_Vector[:,:-1].reshape(-1,1), self.Feature_Vector[:,-1], test_size=0.2, random_state=0)
+           X_train, X_test, y_train, y_test = train_test_split(self.Feature_Vector[:,:-1].reshape(-1,1), self.Feature_Vector[:,-1], test_size=0.2)
         tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4],'C': [1]}]
 
         #scores = ['precision', 'recall']
@@ -1023,23 +1033,12 @@ class Ui_Form(object):
         for score in scores:
                 clf = GridSearchCV(SVC(), tuned_parameters, cv=5, scoring='%s_macro' % score)
                 clf.fit(X_train, y_train)
-                print("Best parameters:")
-                print()
-                print(clf.best_params_)
-                print()
-                print("Grid scores:")
-                print()
                 means = clf.cv_results_['mean_test_score']
                 stds = clf.cv_results_['std_test_score']
-                for mean, std, params in zip(means, stds, clf.cv_results_['params']):
-                        print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
-                        print()
                 print("Detailed classification report:")
                 y_true, y_pred = y_test, clf.predict(X_test)
                 report = str(classification_report(y_true, y_pred))
-                self.plainTextEdit.setText(report)
-                print()
-           
+                self.plainTextEdit.setText(report)           
                 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
