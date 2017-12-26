@@ -12,8 +12,7 @@ def getPrecision(yTest, yPrediction):
             if yPrediction[i] == 1:
                 FP += 1
             P = 0
-        print (yTest[i])
-    
+    #print(TP,FP)
     return (TP * 1.0 / (TP+FP))
 
     

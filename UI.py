@@ -4,7 +4,7 @@ import AdjacencyMatrix
 import ScoreAA
 import ScoreCN
 import ScoreJC
-import ScorePA
+import ScoreRA
 import MachineLearning
 import AUC
 import numpy as np
@@ -13,6 +13,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVC
 from sklearn import svm
+from sklearn.metrics import classification_report
+
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -649,6 +651,7 @@ class Ui_Form(object):
 "    \n"
 "}")
         self.checkBox_2.setObjectName("checkBox_2")
+        self.checkBox_2.setEnabled(False)
         self.checkBox_3 = QtWidgets.QCheckBox(self.tab_2)
         self.checkBox_3.setGeometry(QtCore.QRect(80, 180, 171, 20))
         self.checkBox_3.setStyleSheet("QCheckBox{\n"
@@ -1014,6 +1017,17 @@ class Ui_Form(object):
         #print(self.Matrix_Adjacency, len(self.Matrix_Adjacency))       
 
     def tab3_Save(self):
+        self.Feature_Vector = []
+        if self.checkBox.isChecked() and self.checkBox_3.isChecked() and self.checkBox_4.isChecked():
+                tempA = ScoreCN.getMatrixHalf(self.Matrix_Adjacency)[:, :-1]
+                tempB = ScoreAA.getMatrixHalf(self.Matrix_Adjacency)[:, :-1]
+                tempC = ScoreAA.getMatrixHalf(self.Matrix_Adjacency)
+                for i in range(len(tempA)):
+                        self.Feature_Vector.append([tempA[i, 0], tempB[i, 0], tempC[i, 0], tempC[i, 1]])
+                        #self.Feature_Vector.append([tempA[i, 0], tempC[i, 0], tempC[i, 1]])
+                #print (self.Feature_Vector)
+                self.Feature_Vector = np.array(self.Feature_Vector)
+                return None
         if self.checkBox.isChecked():
            self.Feature_Vector = ScoreCN.getMatrixHalf(self.Matrix_Adjacency)
         if self.checkBox_2.isChecked():
@@ -1021,20 +1035,17 @@ class Ui_Form(object):
         if self.checkBox_3.isChecked():
            self.Feature_Vector = ScoreAA.getMatrixHalf(self.Matrix_Adjacency)
         if self.checkBox_4.isChecked():
-           self.Feature_Vector = ScorePA.getMatrixHalf(self.Matrix_Adjacency)
+           self.Feature_Vector = ScoreRA.getMatrixHalf(self.Matrix_Adjacency)
         
-        tempA = ScoreCN.getMatrixHalf(self.Matrix_Adjacency)[:, :-1]
-        tempB = ScoreCN.getMatrixHalf(self.Matrix_Adjacency)
-        for i in len(tempA):
-           self.Feature_Vector.append([tempA[i], tempB[i, 0], tempB[i, 1]])
         self.progressBar_3.setValue(100)
 
     def tab4_Save(self):
         if self.radioButton_10.isChecked():
-           X_train, X_test, y_train, y_test = train_test_split(self.Feature_Vector[:,:-1], self.Feature_Vector[:,-1], test_size=0.2)
+           X_train, X_test, y_train, y_test = train_test_split(self.Feature_Vector[:,:-1], self.Feature_Vector[:,-1], test_size=0.2, random_state = 0)
            #print(X_train, y_train)
-           #X_train = X_train.reshape(-1, 1)
-           #X_test = X_test.reshape(-1, 1)
+           if len(self.Feature_Vector[0, :]) == 2:
+                X_train = X_train.reshape(-1, 1)
+                X_test = X_test.reshape(-1, 1)
 
         tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4],'C': [1]}]
 
@@ -1047,7 +1058,7 @@ class Ui_Form(object):
                 stds = clf.cv_results_['std_test_score']
                 #print("Detailed classification report:")
                 y_true, y_pred = y_test, clf.predict(X_test)
-                report = str(classification_report(y_true, y_pred))
+                report = str(AUC.getPrecision(y_true, y_pred))
                 self.plainTextEdit.setText(report)           
                 
     def retranslateUi(self, Form):
@@ -1087,7 +1098,7 @@ class Ui_Form(object):
         self.checkBox.setText(_translate("Form", "   Common Neighbors"))
         self.checkBox_2.setText(_translate("Form", "   Jaccard"))
         self.checkBox_3.setText(_translate("Form", "   Adamic - Adar"))
-        self.checkBox_4.setText(_translate("Form", "   Preferential Attachment"))
+        self.checkBox_4.setText(_translate("Form", "   Resource Allocation"))
         self.checkBox_5.setText(_translate("Form", "   Reliable-route Common Neighbors"))
         self.checkBox_6.setText(_translate("Form", "   Reliable-route Jaccard"))
         self.checkBox_7.setText(_translate("Form", "   Reliable-route Adamic - Adar"))
