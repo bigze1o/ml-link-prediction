@@ -6,11 +6,11 @@ import ScoreCN
 import ScoreJC
 import ScorePA
 import MachineLearning
+import AUC
 import numpy as np
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import classification_report
 from sklearn.svm import SVC
 from sklearn import svm
 
@@ -974,7 +974,7 @@ class Ui_Form(object):
         self.retranslateUi(Form)
         self.tabWidget.setCurrentIndex(0)
         #Add
-        
+
         self.status_tab1 = False
         self.status_tab2 = False
         self.status_tab3 = False
@@ -982,6 +982,7 @@ class Ui_Form(object):
         self.Path_File = None
         self.Matrix_Adjacency = []
         self.Feature_Vector = []
+        self.Combine_Vector = []
         self.pushButton.clicked.connect(self.tab1_Save)
         self.pushButton_3.clicked.connect(self.tab2_Save)
         self.pushButton_6.clicked.connect(self.tab3_Save)
@@ -1010,7 +1011,7 @@ class Ui_Form(object):
         if self.radioButton_2.isChecked():
            self.Matrix_Adjacency = AdjacencyMatrix.Matrix_Link_Undirect(Data) 
         self.progressBar_2.setValue(100)
-        print(self.Matrix_Adjacency, len(self.Matrix_Adjacency))       
+        #print(self.Matrix_Adjacency, len(self.Matrix_Adjacency))       
 
     def tab3_Save(self):
         if self.checkBox.isChecked():
@@ -1021,11 +1022,20 @@ class Ui_Form(object):
            self.Feature_Vector = ScoreAA.getMatrixHalf(self.Matrix_Adjacency)
         if self.checkBox_4.isChecked():
            self.Feature_Vector = ScorePA.getMatrixHalf(self.Matrix_Adjacency)
+        
+        tempA = ScoreCN.getMatrixHalf(self.Matrix_Adjacency)[:, :-1]
+        tempB = ScoreCN.getMatrixHalf(self.Matrix_Adjacency)
+        for i in len(tempA):
+           self.Feature_Vector.append([tempA[i], tempB[i, 0], tempB[i, 1]])
         self.progressBar_3.setValue(100)
 
     def tab4_Save(self):
         if self.radioButton_10.isChecked():
-           X_train, X_test, y_train, y_test = train_test_split(self.Feature_Vector[:,:-1].reshape(-1,1), self.Feature_Vector[:,-1], test_size=0.2)
+           X_train, X_test, y_train, y_test = train_test_split(self.Feature_Vector[:,:-1], self.Feature_Vector[:,-1], test_size=0.2)
+           #print(X_train, y_train)
+           #X_train = X_train.reshape(-1, 1)
+           #X_test = X_test.reshape(-1, 1)
+
         tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4],'C': [1]}]
 
         #scores = ['precision', 'recall']
@@ -1035,7 +1045,7 @@ class Ui_Form(object):
                 clf.fit(X_train, y_train)
                 means = clf.cv_results_['mean_test_score']
                 stds = clf.cv_results_['std_test_score']
-                print("Detailed classification report:")
+                #print("Detailed classification report:")
                 y_true, y_pred = y_test, clf.predict(X_test)
                 report = str(classification_report(y_true, y_pred))
                 self.plainTextEdit.setText(report)           

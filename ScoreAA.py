@@ -33,7 +33,7 @@ def getMatrixHalf(matrixAdj):
                     res = np.sum(matrixAdj[k, :])
                     if log(res) != 0.0:
                         aaScore += 1.0/log(res)
-                tag_class = matrixAdj[i, j]
+            tag_class = matrixAdj[i, j]
             matrixScore.append([aaScore, tag_class])
     return np.array(matrixScore)
 
